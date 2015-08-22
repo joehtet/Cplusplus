@@ -1,0 +1,28 @@
+// While(user==gullible)
+#include <iostream>
+#include <string>
+using namespace std;
+
+
+void guillable(){
+    int userInput; int inputCount = 0;
+	do{
+	    cout << "Enter any number other than " << inputCount << "..." << endl;
+	    cin  >> userInput;
+		if(userInput==inputCount){
+		    cout << "Hey! you weren't supposed to enter " << inputCount
+				<< "!" << endl; 
+		    break;
+		}
+		else if(inputCount==10){
+		    cout << "Wow, you're more patient then I am, you win." << endl;
+		    break;
+		}
+		else{inputCount++;}
+	} while(true);
+};
+
+int main(){ 
+	guillable();
+	return 0;
+};
