@@ -1,0 +1,48 @@
+// Pancake Glutton
+
+#include <iostream>
+using namespace std;
+
+class Pancake{
+	public:
+		int array[2][10]; int arrayLen = 10;
+		void input();
+		void sortDescending();
+};
+
+void Pancake::input(){
+	for (int i = 0; i < arrayLen; i++){
+		array[0][i] = i + 1;
+		cout << "Please enter number of pancakes eaten for Person " << i + 1 << ": ";
+		cin >> array[1][i];
+	}
+};
+
+void Pancake::sortDescending(){
+	int placeholder; 
+	for (int i = 0; i < arrayLen; i++){
+		for (int j = i; j < arrayLen; j++){
+			if (array[1][j] > array[1][i]){
+
+				placeholder = array[1][j];
+				array[1][j] = array[1][i];
+				array[1][i] = placeholder;
+
+				placeholder = array[0][j];
+				array[0][j] = array[0][i];
+				array[0][i] = placeholder;
+			}
+		}
+	}
+}
+
+int main(){
+	Pancake list;
+	list.input();
+	list.sortDescending();
+
+	for (int i = 0; i < 10; i++){
+		cout << "Person " << list.array[0][i] << ": ate " << list.array[1][i] << " pancakes " << endl;
+	}
+	return 0;
+}
