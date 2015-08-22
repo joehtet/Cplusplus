@@ -1,0 +1,31 @@
+// Cola Machine
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+void ColaMachine(){
+	int choice;
+	cout << "Thirsty, traveler? Have a beverage." << endl;
+	cout << "Enter the number you want." << endl;
+	cout << "1. Water  2. Coke 3. Nuka-Cola 4. Booty Sweat 5. Slurm" << endl;
+	cin >> choice;
+	switch(choice){
+		case 1:
+			cout << "-Clink-clink- enjoy your water. " << endl;break;
+		case 2:
+			cout << "-Clink-clink- enjoy your coke. " << endl;break;
+		case 3:
+			cout << "-Clink-clink- enjoy your Nuka-cola. " << endl;break;
+		case 4:
+			cout << "-Clink-clink- enjoy your Booty Sweat. " << endl;break;
+		case 5:
+			cout << "-Clink-clink- enjoy your Slurm. " << endl;break;
+		default:;
+	}
+};
+
+int main(){
+     ColaMachine();
+	return 0;
+}
