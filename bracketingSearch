@@ -1,0 +1,61 @@
+// Bracketing Search
+
+#include <stdlib.h>
+#include <iostream>
+using namespace std;
+
+void userGuess(){
+	int number = rand() % 100 + 1;
+	int guess; int counter=0;
+	bool flag = true;
+
+	cout << "Guess a number between 1 and 100" << endl;
+	while (flag){
+		cin >> guess;
+		if (guess == number){
+			cout << "Grats dude, you got it!" << endl;
+			cout << "It only took you " << counter+1 << " tries." << endl;
+			break;
+		}
+		else if (guess > number){
+			cout << "Too high, try again" << endl;
+		}
+		else{
+			cout << "Too low, try again" << endl;
+		}
+		counter++;
+	}
+};
+
+void computerGuess(){
+    int lowHigh; int guess; int min = 0; int max = 100;int count=0;
+    
+    cout << "Let me guess your number. Please press: \n 1. Too high   2. Too low    3. Correct!" << endl;
+    while(lowHigh!=3){
+        guess = (max-min)/2 + min;
+        ++count;
+        cout <<"is your number " << guess << "? #" << count << endl;
+        cin >> lowHigh;
+        
+        switch(lowHigh){
+            case 1: 
+                cout << "Oh ok. Let me try again." << endl;
+                max = guess;
+                break;
+            case 2:
+                cout << "Oh ok. Let me try again." << endl;
+                min = guess;
+                break;
+            case 3:
+                cout << "Aww yeah. I'm so smart." << endl;
+                break;
+            default:;
+        }   
+    }
+}
+
+int main(){
+	//userGuess();
+	computerGuess();
+	return 0;
+};
