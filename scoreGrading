@@ -1,0 +1,22 @@
+// Cplusplus
+// Enter  score
+#include <iostream>
+#include <string>
+using namespace std;
+
+int score;
+
+void scoreCheck(int i){
+    if(i>=90 && i<=100){cout << "Congratulations! You scored an A! " << endl;}
+    else if(i>=0 && i<=59){cout << "Too bad, you got an F" << endl;}
+    else if(i<=60 && i>=69){cout << "You got a D" << endl;}
+    else if(i<=70 && i>=79){cout << "You get a C" << endl;}
+    else{cout << "Nice! You got a B" << endl;}
+};
+
+int main()
+{ 
+    cout << "Please enter your score! (0-100) ";
+    cin >> score;
+    scoreCheck(score);
+};
