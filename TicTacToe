@@ -1,0 +1,146 @@
+
+	/////////////////   
+	// Tic-Tac-Toe //   
+	// Joseph Htet //   
+	// August 2015 //
+	/////////////////
+
+	
+//Please excuse this monstrocity
+
+#include <iostream>
+using namespace std;
+
+/* TicTacToe Class */
+class TicTacToe{
+	private:
+		int i; //iterator
+	//Game 
+		int input; // current player's input
+		int turn[9]; // keeps track of turns and serves as user input storage
+		int playerTurn; // which player went last
+		char gameBoard[9];  // board with 9 spaces
+		void single(); // starts singleplayer	
+		void multi(); // starts multiplayer
+		bool checkgameover(); //checks if the game is over or not
+	//GUI
+		void userHelp(); // explains the game 
+		void updateGameBoard(int input); // changes gameboard as the game is played and displays the board.		
+		void bar(){cout << "---------------------------------------------------------------------------------" << endl;}
+	//Player Input	
+		int getInput(int j); // takes in an user input and outputs to gameBoard
+		void cpuTurn();  // generate random turn or tries to stop opponent from winning.
+		
+    public:
+		void initialize(); // game start. choose single or multiplayer.
+};
+
+void TicTacToe::initialize(){
+	int choice; 
+	for(i=0;i<9;i++){turn[i]=100+i;gameBoard[i]='_';};bar();
+	cout << "Welcome to Joe's Tic-Tac-Toe! To begin please choose: "<< endl;
+	cout << "	1. Single Player   \n	2. Multiplayer  \n	3. Quit" << endl;bar();
+	cin >> choice;
+	switch(choice){
+		case 1: single();break; // start singleplayer
+		case 2: multi();break; // start multiplayer
+		case 3: cout << "Okay. See ya!" << endl;break;   
+		default:cout << "Choose 1, 2, or 3, you dummy. \n" << endl;
+			initialize();
+	}
+};
+
+void TicTacToe::single(){
+	bar();
+	cout << "Okay, you'll be fighting me! " << endl; 
+	cout << "I hope you're an astronaut because I'm about to slap your ass to the mooooooon." << endl; 
+	userHelp();
+}
+
+void TicTacToe::multi(){
+	bar(); i=0; playerTurn=1;
+	cout << "Alright, enjoy. I hope you both lose!" << endl;
+	userHelp();
+	cout << "\n	|" << gameBoard[6] << "|" << gameBoard[7] << "|" << gameBoard[8] << "|" << endl;
+	cout << "	|" << gameBoard[3] << "|" << gameBoard[4] << "|" << gameBoard[5] << "|" << endl;
+	cout << "	|" << gameBoard[0] << "|" << gameBoard[1] << "|" << gameBoard[2] << "|" << endl;
+	while(!checkgameover() && i<9){
+		input = getInput(playerTurn);
+		updateGameBoard(input-1);
+		if(playerTurn==1){turn[input-1]=2;playerTurn=2;}
+		else{turn[input-1]=1;playerTurn=1;}
+		i++;
+	}
+
+	switch(playerTurn){
+		case 1: cout << "x wins!" << endl;break;
+		case 2: cout << "o wins!" << endl;break;
+	}
+}
+
+void TicTacToe::userHelp(){
+	bar();
+	cout << "To play, you have to enter a number based on this layout: " << endl; 
+	cout << "\n	Layout		Ex)Input=5" << endl;
+	cout << "	|7|8|9|		|_|_|_|" << endl;
+	cout << "	|4|5|6|		|_|o|_|" << endl;
+	cout << "	|1|2|3|		|_|_|_|\n" << endl; bar();
+}
+
+int TicTacToe::getInput(int j){
+	int output;
+	switch(j){
+		case 1: 
+			cout << "It's o turn now. Please make your move:" << endl;
+			cin >> output;break;
+		case 2: 
+			cout << "It's x's turn now. Please make your move:" << endl;
+			cin >> output;break;
+		case 3: 
+			cout << "It's x's turn now. Please make your move:" << endl;
+			cin >> output;break;
+	}
+	return output;
+};
+
+void TicTacToe::updateGameBoard(int input){
+	switch(playerTurn){
+		case 1: 
+			gameBoard[input]='o';break;
+		case 2: 
+			gameBoard[input]='x';break;
+		case 3:
+			gameBoard[input]='x';break;
+	}
+	
+	cout << "\n	|" << gameBoard[6] << "|" << gameBoard[7] << "|" << gameBoard[8] << "|" << endl;
+	cout << "	|" << gameBoard[3] << "|" << gameBoard[4] << "|" << gameBoard[5] << "|" << endl;
+	cout << "	|" << gameBoard[0] << "|" << gameBoard[1] << "|" << gameBoard[2] << "|" << endl;
+	// |_|x|o| <---- Board will look like this.
+	// |o|o|o|  
+	// |_|x|_|
+};
+
+void TicTacToe::cpuTurn(){};
+
+bool TicTacToe::checkgameover(){
+	for(int k=0;k<9;k++){cout<<turn[k]<<endl;}
+	if((turn[0]==turn[1]==turn[2]) || 
+		(turn[3]==turn[4]==turn[5]) || 
+		(turn[6]==turn[7]==turn[8]) || 
+		(turn[0]==turn[3]==turn[6]) || 
+		(turn[7]==turn[4]==turn[1]) || 
+		(turn[8]==turn[5]==turn[2]) || 
+		(turn[6]==turn[4]==turn[2]) || 
+		(turn[0]==turn[4]==turn[8]))
+		{return true;}
+	else{return false;}
+}
+
+/*=======================================================================================================*/
+
+int main(){
+    TicTacToe start;
+	start.initialize();
+	return 0;
+}
