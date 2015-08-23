@@ -4,14 +4,14 @@
 	// Joseph Htet //   
 	// August 2015 //
 	/////////////////
-
 	
 //Please excuse this monstrocity
 
 #include <iostream>
+#include <string>
 using namespace std;
 
-/* TicTacToe Class */
+/* TicTacToe */
 class TicTacToe{
 	private:
 		int i; //iterator
@@ -23,10 +23,10 @@ class TicTacToe{
 		void single(); // starts singleplayer	
 		void multi(); // starts multiplayer
 		bool checkgameover(); //checks if the game is over or not
+		char whoseTurn(int j);
 	//GUI
 		void userHelp(); // explains the game 
 		void updateGameBoard(int input); // changes gameboard as the game is played and displays the board.		
-		void bar(){cout << "---------------------------------------------------------------------------------" << endl;}
 	//Player Input	
 		int getInput(int j); // takes in an user input and outputs to gameBoard
 		void cpuTurn();  // generate random turn or tries to stop opponent from winning.
@@ -34,6 +34,8 @@ class TicTacToe{
     public:
 		void initialize(); // game start. choose single or multiplayer.
 };
+
+void bar(){cout << "---------------------------------------------------------------------------------" << endl;}
 
 void TicTacToe::initialize(){
 	int choice; 
@@ -58,24 +60,38 @@ void TicTacToe::single(){
 }
 
 void TicTacToe::multi(){
-	bar(); i=0; playerTurn=1;
-	cout << "Alright, enjoy. I hope you both lose!" << endl;
+	bar(); i=0; playerTurn=1; int whoWon;
+	cout << "Alright, enjoy! I hope you both lose!" << endl;
 	userHelp();
 	cout << "\n	|" << gameBoard[6] << "|" << gameBoard[7] << "|" << gameBoard[8] << "|" << endl;
 	cout << "	|" << gameBoard[3] << "|" << gameBoard[4] << "|" << gameBoard[5] << "|" << endl;
 	cout << "	|" << gameBoard[0] << "|" << gameBoard[1] << "|" << gameBoard[2] << "|" << endl;
-	while(!checkgameover() && i<9){
-		input = getInput(playerTurn);
-		updateGameBoard(input-1);
-		if(playerTurn==1){turn[input-1]=2;playerTurn=2;}
-		else{turn[input-1]=1;playerTurn=1;}
-		i++;
+	while(!checkgameover()){
+		if(i<9){
+			input = getInput(playerTurn);
+			updateGameBoard(input-1);
+			if(playerTurn==1){turn[input-1]=2;playerTurn=2;}
+			else{turn[input-1]=1;playerTurn=1;}
+			whoWon = playerTurn;
+			i++;
+		}
+		else{
+			whoWon = 3;
+			break;
+		}
 	}
 
-	switch(playerTurn){
-		case 1: cout << "x wins!" << endl;break;
-		case 2: cout << "o wins!" << endl;break;
+	switch(whoWon){
+		case 1: cout << "\nx wins! o is at a loss for words." << endl;break;
+		case 2: cout << "\no wins! x sucks" << endl;break;
+		case 3:	cout << "\nDraw! You both wasted your time!" << endl;break; 
 	}
+	
+	bar(); 
+	cout << "Play again? y/n" << endl;  
+	char replay; cin >> replay;
+	if(replay=='y'){initialize();} //start over
+	else{cout << "Okay thanks for playing :)" << endl;}
 }
 
 void TicTacToe::userHelp(){
@@ -87,20 +103,33 @@ void TicTacToe::userHelp(){
 	cout << "	|1|2|3|		|_|_|_|\n" << endl; bar();
 }
 
-int TicTacToe::getInput(int j){
-	int output;
+char TicTacToe::whoseTurn(int j){
+    char output;
 	switch(j){
 		case 1: 
-			cout << "It's o turn now. Please make your move:" << endl;
+			cout << "\nIt's o's turn now. Please make your move:" << endl;
 			cin >> output;break;
 		case 2: 
-			cout << "It's x's turn now. Please make your move:" << endl;
+			cout << "\nIt's x's turn now. Please make your move:" << endl;
 			cin >> output;break;
 		case 3: 
-			cout << "It's x's turn now. Please make your move:" << endl;
+			cout << "\nIt's x's turn now. Please make your move:" << endl;
 			cin >> output;break;
 	}
 	return output;
+}
+
+int TicTacToe::getInput(int j){
+	char output = whoseTurn(j);
+	int num = output-'0';
+	bar();
+	
+	if(!(num>0 && num<=9) && !isdigit(output)){ 
+		cout << "Wrongggggggggg. Try again."<< endl;
+		whoseTurn(j);
+	}
+		
+	return num;
 };
 
 void TicTacToe::updateGameBoard(int input){
@@ -124,15 +153,14 @@ void TicTacToe::updateGameBoard(int input){
 void TicTacToe::cpuTurn(){};
 
 bool TicTacToe::checkgameover(){
-	for(int k=0;k<9;k++){cout<<turn[k]<<endl;}
-	if((turn[0]==turn[1]==turn[2]) || 
-		(turn[3]==turn[4]==turn[5]) || 
-		(turn[6]==turn[7]==turn[8]) || 
-		(turn[0]==turn[3]==turn[6]) || 
-		(turn[7]==turn[4]==turn[1]) || 
-		(turn[8]==turn[5]==turn[2]) || 
-		(turn[6]==turn[4]==turn[2]) || 
-		(turn[0]==turn[4]==turn[8]))
+	if(((turn[0]==turn[1])&&(turn[1]==turn[2])) || 
+		((turn[3]==turn[4])&&(turn[4]==turn[5])) || 
+		((turn[6]==turn[7])&&(turn[7]==turn[8])) || 
+		((turn[0]==turn[3])&&(turn[3]==turn[6])) || 
+		((turn[7]==turn[4])&&(turn[4]==turn[1])) || 
+		((turn[8]==turn[5])&&(turn[5]==turn[2])) ||
+		((turn[6]==turn[4])&&(turn[4]==turn[2])) || 
+		((turn[0]==turn[4])&&(turn[4]==turn[8])))
 		{return true;}
 	else{return false;}
 }
@@ -141,6 +169,8 @@ bool TicTacToe::checkgameover(){
 
 int main(){
     TicTacToe start;
-	start.initialize();
+	start.initialize();bar();
+	cout << "Type any key to exit" << endl; bar();
+	int exit;cin>>exit;
 	return 0;
 }
