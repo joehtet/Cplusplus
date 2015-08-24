@@ -1,100 +1,178 @@
-
-	/////////////////   
-	// Tic-Tac-Toe //   
-	// Joseph Htet //   
-	// August 2015 //
-	/////////////////
+/* 
+\\\\\\\\\\\\\\\\\
+//  TicTacToe  //
+\\ Joseph Htet \\
+// August 2015 //							      
+\\\\\\\\\\\\\\\\\
+*/																					
 	
-//Please excuse this monstrocity
+//I've created a monster!
 
 #include <iostream>
 #include <string>
+#include <cmath>
 using namespace std;
 
-/* TicTacToe */
-class TicTacToe{
+
+class TicTacToe{ // Need to structure my code better. Should I make a class for CPU AI?
+
+// mah variable declarations
 	private:
-		int i; //iterator
-	//Game 
-		int input; // current player's input
-		int turn[9]; // keeps track of turns and serves as user input storage
+		int i; // iterates the number of turns. could be thought of as the "time" unit of this system.
 		int playerTurn; // which player went last
+		int turn[9]; // keeps track of turns and serves as user input storage
+		float output[9]; // move tracker
 		char gameBoard[9];  // board with 9 spaces
-		void single(); // starts singleplayer	
-		void multi(); // starts multiplayer
-		bool checkgameover(); //checks if the game is over or not
-		char whoseTurn(int j);
-	//GUI
-		void userHelp(); // explains the game 
-		void updateGameBoard(int input); // changes gameboard as the game is played and displays the board.		
+    public:
+        int p1OrP2; // game token
+		
+//Game functions
+    private:
+		void game(int p1OrP2); //starts game
+		bool checkgameover(); // checks if the game is over or not
+		int whoseTurn(int j); // whose turn is it anyway? 
 	//Player Input	
 		int getInput(int j); // takes in an user input and outputs to gameBoard
-		void cpuTurn();  // generate random turn or tries to stop opponent from winning.
-		
+		int cpuTurn();  // generate random turn or tries to stop opponent from winning.
+	//Display functions
+		void displayBoard(); // simply displays the board based on gameBoard
+		void userHelp(); // explains the game 
+		void updateGameBoard(int input); // changes gameboard as the game is played	
     public:
-		void initialize(); // game start. choose single or multiplayer.
+    	void bar(){
+		cout << "---------------------------------------------------------------------------------" << endl;}
+		// Just a bar to make it look prettier.
+		int initialize(); // game start. choose single or multiplayer.
 };
 
-void bar(){cout << "---------------------------------------------------------------------------------" << endl;}
 
-void TicTacToe::initialize(){
-	int choice; 
+int TicTacToe::initialize(){
 	for(i=0;i<9;i++){turn[i]=100+i;gameBoard[i]='_';};bar();
 	cout << "Welcome to Joe's Tic-Tac-Toe! To begin please choose: "<< endl;
 	cout << "	1. Single Player   \n	2. Multiplayer  \n	3. Quit" << endl;bar();
-	cin >> choice;
-	switch(choice){
-		case 1: single();break; // start singleplayer
-		case 2: multi();break; // start multiplayer
-		case 3: cout << "Okay. See ya!" << endl;break;   
-		default:cout << "Choose 1, 2, or 3, you dummy. \n" << endl;
-			initialize();
+	cin >> p1OrP2;
+	if(p1OrP2==1 || p1OrP2==2){game(p1OrP2);
 	}
+	else if(p1OrP2==3){cout << "Okay. See ya!" << endl;}   // quit game
+	else{
+		cout << "Choose 1, 2, or 3, you dummy. \n" << endl; //redo
+		initialize();
+	}
+	return p1OrP2;
 };
 
-void TicTacToe::single(){
-	bar();
-	cout << "Okay, you'll be fighting me! " << endl; 
-	cout << "I hope you're an astronaut because I'm about to slap your ass to the mooooooon." << endl; 
-	userHelp();
-}
 
-void TicTacToe::multi(){
-	bar(); i=0; playerTurn=1; int whoWon;
-	cout << "Alright, enjoy! I hope you both lose!" << endl;
+void TicTacToe::game(int p1OrP2){
+	
+	int whoWon, input;
+	
+	bar();  //playerTurn = 0 <- player 1, 1<- cpu, 2 <- player 2
+	switch(p1OrP2){
+		case 1: 
+			cout << "Okay, you'll be fighting me! " << endl; 
+			cout << "I hope you're an astronaut because I'm about to slap your ass to the mooooooon." << endl;break;
+		case 2: 
+			cout << "Alright, enjoy! I hope you both lose!" << endl;break;
+	}
+	
 	userHelp();
-	cout << "\n	|" << gameBoard[6] << "|" << gameBoard[7] << "|" << gameBoard[8] << "|" << endl;
-	cout << "	|" << gameBoard[3] << "|" << gameBoard[4] << "|" << gameBoard[5] << "|" << endl;
-	cout << "	|" << gameBoard[0] << "|" << gameBoard[1] << "|" << gameBoard[2] << "|" << endl;
-	while(!checkgameover()){
-		if(i<9){
-			input = getInput(playerTurn);
+	displayBoard();
+	i = 0; playerTurn = 0; whoWon = 0; 
+
+	while(true){	//loops til game ends 
+		if(((turn[0]==turn[1])&&(turn[1]==turn[2])) ||  //gameover conditions based on my design of game board.
+			((turn[3]==turn[4])&&(turn[4]==turn[5])) || 
+			((turn[6]==turn[7])&&(turn[7]==turn[8])) || 
+			((turn[0]==turn[3])&&(turn[3]==turn[6])) || 
+			((turn[7]==turn[4])&&(turn[4]==turn[1])) || 
+			((turn[8]==turn[5])&&(turn[5]==turn[2])) ||
+			((turn[6]==turn[4])&&(turn[4]==turn[2])) || 
+			((turn[0]==turn[4])&&(turn[4]==turn[8]))){
+			break;
+		}
+		
+		else if(i<9){	
+			input = getInput(playerTurn); // get input of current player. p1 p2 will cin. cpu will generate input
 			updateGameBoard(input-1);
-			if(playerTurn==1){turn[input-1]=2;playerTurn=2;}
-			else{turn[input-1]=1;playerTurn=1;}
+			
+			if(playerTurn==0){		// change players.
+				turn[input-1]=2;
+				if(p1OrP2)
+				playerTurn=p1OrP2;
+			}
+			else{
+				turn[input-1]=1;
+				playerTurn=0;
+			}
+			
 			whoWon = playerTurn;
 			i++;
-		}
+		}		
+		
 		else{
-			whoWon = 3;
+			whoWon = 3; // draw
 			break;
 		}
 	}
 
-	switch(whoWon){
-		case 1: cout << "\nx wins! o is at a loss for words." << endl;break;
+	switch(whoWon){ // cases for win, loss, and draw situations.
+		case 0: cout << "\nx wins! o is at a loss for words." << endl;break;
+		case 1: cout << "\no wins! x sucks" << endl;break;
 		case 2: cout << "\no wins! x sucks" << endl;break;
-		case 3:	cout << "\nDraw! You both wasted your time!" << endl;break; 
+		case 3:	cout << "\nDraw! Thanks for playing." << endl;break; 
 	}
-	
+			
 	bar(); 
-	cout << "Play again? y/n" << endl;  
+	cout << "Play again? y/n" << endl;  //restarts game. if inputted 'y', i initialize() the game again.
 	char replay; cin >> replay;
 	if(replay=='y'){initialize();} //start over
 	else{cout << "Okay thanks for playing :)" << endl;}
 }
 
-void TicTacToe::userHelp(){
+
+int TicTacToe::getInput(int playerTurn){
+	output[i] = whoseTurn(playerTurn);
+	bar();
+	while(!(output[i]>0 && output[i]<=9)||!(output[i]-floor(output[i])==0)||(!cin.good())){ 
+		cout << "Wrongggggggggg. Try again."<< endl;
+		cin.clear();cin.ignore(100,'\n');
+		output[i]=whoseTurn(playerTurn);
+	}
+	return output[i];
+};
+
+
+int TicTacToe::whoseTurn(int j){  //this determines who's going based on the playerTurn variable. 
+	switch(j){
+		case 0: 
+			cout << "\nIt's o's turn now. Please make your move: "; 
+			cin >> output[i];
+			cout << endl;
+			break;
+		case 1: 
+			output[i] = cpuTurn();
+			cout << "\nIt's x's turn now. I choose this move: " << output[i] << endl;
+			break;
+		case 2: 
+			cout << "\nIt's x's turn now. Please make your move: ";
+			cin >> output[i];
+			cout << endl;
+			break;
+
+	}
+
+	return output[i];
+}
+
+
+int TicTacToe::cpuTurn(){
+	//available to use: -> output[i] where output[0]..output[2]...output[4] are player 1 values
+    output[i] = 2;
+	return output[i];
+};
+
+
+void TicTacToe::userHelp(){ //tells you how to play
 	bar();
 	cout << "To play, you have to enter a number based on this layout: " << endl; 
 	cout << "\n	Layout		Ex)Input=5" << endl;
@@ -103,74 +181,38 @@ void TicTacToe::userHelp(){
 	cout << "	|1|2|3|		|_|_|_|\n" << endl; bar();
 }
 
-char TicTacToe::whoseTurn(int j){
-    char output;
-	switch(j){
-		case 1: 
-			cout << "\nIt's o's turn now. Please make your move:" << endl;
-			cin >> output;break;
-		case 2: 
-			cout << "\nIt's x's turn now. Please make your move:" << endl;
-			cin >> output;break;
-		case 3: 
-			cout << "\nIt's x's turn now. Please make your move:" << endl;
-			cin >> output;break;
-	}
-	return output;
-}
-
-int TicTacToe::getInput(int j){
-	char output = whoseTurn(j);
-	int num = output-'0';
-	bar();
-	
-	if(!(num>0 && num<=9) && !isdigit(output)){ 
-		cout << "Wrongggggggggg. Try again."<< endl;
-		whoseTurn(j);
-	}
-		
-	return num;
-};
-
-void TicTacToe::updateGameBoard(int input){
-	switch(playerTurn){
-		case 1: 
-			gameBoard[input]='o';break;
-		case 2: 
-			gameBoard[input]='x';break;
-		case 3:
-			gameBoard[input]='x';break;
-	}
-	
+void TicTacToe::displayBoard(){
 	cout << "\n	|" << gameBoard[6] << "|" << gameBoard[7] << "|" << gameBoard[8] << "|" << endl;
 	cout << "	|" << gameBoard[3] << "|" << gameBoard[4] << "|" << gameBoard[5] << "|" << endl;
 	cout << "	|" << gameBoard[0] << "|" << gameBoard[1] << "|" << gameBoard[2] << "|" << endl;
 	// |_|x|o| <---- Board will look like this.
 	// |o|o|o|  
 	// |_|x|_|
-};
-
-void TicTacToe::cpuTurn(){};
-
-bool TicTacToe::checkgameover(){
-	if(((turn[0]==turn[1])&&(turn[1]==turn[2])) || 
-		((turn[3]==turn[4])&&(turn[4]==turn[5])) || 
-		((turn[6]==turn[7])&&(turn[7]==turn[8])) || 
-		((turn[0]==turn[3])&&(turn[3]==turn[6])) || 
-		((turn[7]==turn[4])&&(turn[4]==turn[1])) || 
-		((turn[8]==turn[5])&&(turn[5]==turn[2])) ||
-		((turn[6]==turn[4])&&(turn[4]==turn[2])) || 
-		((turn[0]==turn[4])&&(turn[4]==turn[8])))
-		{return true;}
-	else{return false;}
 }
+
+void TicTacToe::updateGameBoard(int input){
+	switch(playerTurn){
+		case 0: 
+			gameBoard[input]='o';break;
+		case 1: 
+			gameBoard[input]='x';break;
+		case 2:
+			gameBoard[input]='x';break;
+	}
+	
+	displayBoard();
+};
 
 /*=======================================================================================================*/
 
 int main(){
-    TicTacToe start;
-	start.initialize();bar();
-	cout << "Type any key to exit" << endl; bar();
+	
+    TicTacToe start; 
+	start.initialize();
+	start.bar();
+	
+	cout << "Type any key to exit" << endl; start.bar();
 	int exit;cin>>exit;
 	return 0;
 }
+
