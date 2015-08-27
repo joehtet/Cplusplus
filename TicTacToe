@@ -11,6 +11,8 @@
 #include <iostream>
 #include <string>
 #include <cmath>
+#include <list>
+#include <time.h>
 using namespace std;
 
 
@@ -18,7 +20,7 @@ class TicTacToe{ // Need to structure my code better. Should I make a class for 
 
 // mah variable declarations
 	private:
-		int i; // iterates the number of turns. could be thought of as the "time" unit of this system.
+		int t; // iterates the number of turns. could be thought of as the "time" unit of this system.
 		int playerTurn; // which player went last
 		int turn[9]; // keeps track of turns and serves as user input storage
 		float output[9]; // move tracker
@@ -30,7 +32,6 @@ class TicTacToe{ // Need to structure my code better. Should I make a class for 
     private:
 		void game(int p1OrP2); //starts game
 		bool checkgameover(); // checks if the game is over or not
-		int whoseTurn(int j); // whose turn is it anyway? 
 	//Player Input	
 		int getInput(int j); // takes in an user input and outputs to gameBoard
 		int cpuTurn();  // generate random turn or tries to stop opponent from winning.
@@ -47,11 +48,12 @@ class TicTacToe{ // Need to structure my code better. Should I make a class for 
 
 
 int TicTacToe::initialize(){
-	for(i=0;i<9;i++){turn[i]=100+i;gameBoard[i]='_';};bar();
+	for(t=0;t<9;t++){turn[t]=100+t;gameBoard[t]='_';};bar();
 	cout << "Welcome to Joe's Tic-Tac-Toe! To begin please choose: "<< endl;
 	cout << "	1. Single Player   \n	2. Multiplayer  \n	3. Quit" << endl;bar();
 	cin >> p1OrP2;
-	if(p1OrP2==1 || p1OrP2==2){game(p1OrP2);
+	if(p1OrP2==1 || p1OrP2==2){
+	    game(p1OrP2);   //start game
 	}
 	else if(p1OrP2==3){cout << "Okay. See ya!" << endl;}   // quit game
 	else{
@@ -77,7 +79,7 @@ void TicTacToe::game(int p1OrP2){
 	
 	userHelp();
 	displayBoard();
-	i = 0; playerTurn = 0; whoWon = 0; 
+	t = 0; playerTurn = 0; whoWon = 0; 
 
 	while(true){	//loops til game ends 
 		if(((turn[0]==turn[1])&&(turn[1]==turn[2])) ||  //gameover conditions based on my design of game board.
@@ -91,8 +93,9 @@ void TicTacToe::game(int p1OrP2){
 			break;
 		}
 		
-		else if(i<9){	
+		else if(t<9){	
 			input = getInput(playerTurn); // get input of current player. p1 p2 will cin. cpu will generate input
+			bar();
 			updateGameBoard(input-1);
 			
 			if(playerTurn==0){		// change players.
@@ -106,7 +109,7 @@ void TicTacToe::game(int p1OrP2){
 			}
 			
 			whoWon = playerTurn;
-			i++;
+			t++;    //time for the next turn
 		}		
 		
 		else{
@@ -131,45 +134,120 @@ void TicTacToe::game(int p1OrP2){
 
 
 int TicTacToe::getInput(int playerTurn){
-	output[i] = whoseTurn(playerTurn);
-	bar();
-	while(!(output[i]>0 && output[i]<=9)||!(output[i]-floor(output[i])==0)||(!cin.good())){ 
-		cout << "Wrongggggggggg. Try again."<< endl;
-		cin.clear();cin.ignore(100,'\n');
-		output[i]=whoseTurn(playerTurn);
-	}
-	return output[i];
-};
-
-
-int TicTacToe::whoseTurn(int j){  //this determines who's going based on the playerTurn variable. 
-	switch(j){
+	int flag=0;
+	switch(playerTurn){
 		case 0: 
 			cout << "\nIt's o's turn now. Please make your move: "; 
-			cin >> output[i];
+			cin >> output[t];
 			cout << endl;
 			break;
 		case 1: 
-			output[i] = cpuTurn();
-			cout << "\nIt's x's turn now. I choose this move: " << output[i] << endl;
+			output[t] = cpuTurn();
+			cout << "\nIt's x's turn now. I choose this move: " << output[t] << "\n" << endl;
 			break;
 		case 2: 
 			cout << "\nIt's x's turn now. Please make your move: ";
-			cin >> output[i];
+			cin >> output[t];
 			cout << endl;
 			break;
-
+		default:
+			cout << "Sorry, this space is taken already. Try again: ";
+			cin >> output[t];
+			cout << endl;
+			break;
 	}
 
-	return output[i];
-}
+	for(int j=0;j<t;j++){
+		if(output[t]==output[j]){
+			flag = 1; // inputted move in unavailable space. redo move.
+		}
+	}
+	
+	// checks condition if input is an integer from 1-9
+	while(flag==1 ||!(output[t]>0 && output[t]<=9)||!(output[t]-floor(output[t])==0)||(!cin.good())){ 
+		cout << "Wrongggggggggg. Try again."<< endl;
+		cin.clear();cin.ignore(100,'\n'); //for cin.good() which checks if input is integer 
+		output[t]=getInput(playerTurn);
+		break;
+	}
+	
+	return output[t];
+};
 
 
 int TicTacToe::cpuTurn(){
-	//available to use: -> output[i] where output[0]..output[2]...output[4] are player 1 values
-    output[i] = 2;
-	return output[i];
+    
+	int winCon[8][4] ={{1,2,3,0},{4,5,6,0},{7,8,9,0},{1,4,7,0},{2,5,8,0},{3,6,9,0},{1,5,9,0},{2,5,7,0}}; // winCon[x][3] is the number of matches flag
+	int match[8][3]={{0}}; //match[] keeps track of matched spaces in each win condition.
+    int i,j,k;
+    
+    
+    // First i create a temp list and populate with values from 1-9 that are NOT in output[]
+	list<int> temp; list<int>::iterator it=temp.begin(); // initialize pointer 'it' pointing at beginning of list 
+	for(j=1;j<=9;j++){temp.push_back(j);}; // populate list [1,2,3,4,5,6,7,8,9]
+	for(j=0;j<t;j++){temp.remove(output[j]);}; // remove played moves from temp	
+
+
+    // block win 
+	/*
+		789           <- i'm working with this array.
+		456
+		123
+		
+		the set of win conditions are {123,456,789,147,258,369,159,257}
+		
+		since i have the output[] move tracking array, i can compare p1's moves against this win condition array.
+		then, when there are two spaces of p1 that matches with 2/3 of a win condition, i will return the space that was the winning space.
+	*/
+
+	for(i=0;i<8;i++){ //  cycle through all output[] and winCon[] to find two matches of output[] in winCon
+		for(k=0;k<t;k+=2){
+			for(j=0;j<3;j++){
+				if(output[k]==winCon[i][j]){
+					//found a match, update match[] array.
+					winCon[i][3]++;
+					match[i][j]=1;	
+				}
+			}
+		}
+	
+		if(winCon[i][3]==2){ // (2/3) spaces match. there's a possible win condition for p1.
+		    bool hasBeenPlayed = false;
+			// look at match[i][], there should be two ones and one zero. find the zero and get the index, which will serve as the index to output
+			for(j=0;j<3;j++){
+			    if(match[i][j]==0){
+					break;
+				}
+			}
+
+    		for(int x=0;x<t;x++){  // search through list of available moves. if there's no match, i can play it.
+    		    if(winCon[i][j]==output[x]){
+    		        hasBeenPlayed = true;break;
+    		    }
+    		    else{
+    		        hasBeenPlayed=false;
+    		    }
+    		}	
+    		
+    		if(hasBeenPlayed){}
+    		else{
+			    cout << winCon[i][j] << endl;
+			    return winCon[i][j];
+    		}
+		}
+	} // if the previous for loop ends with no return, there's no counterplay needed. now i can pick a random move. 
+	
+	
+	// random move 
+	// --make a random move --
+	// use rand() to pick a random index of temp and return that number.
+	srand(time(NULL)); // seed for rand()
+	advance(it,rand() % temp.size()+1); // pick a random move from temp. moves 'it' pointer from 1st position in list 'temp' to a random index in list
+	cout <<"this is random"<<endl;
+	return *it;
+
 };
+
 
 
 void TicTacToe::userHelp(){ //tells you how to play
@@ -185,10 +263,13 @@ void TicTacToe::displayBoard(){
 	cout << "\n	|" << gameBoard[6] << "|" << gameBoard[7] << "|" << gameBoard[8] << "|" << endl;
 	cout << "	|" << gameBoard[3] << "|" << gameBoard[4] << "|" << gameBoard[5] << "|" << endl;
 	cout << "	|" << gameBoard[0] << "|" << gameBoard[1] << "|" << gameBoard[2] << "|" << endl;
-	// |_|x|o| <---- Board will look like this.
-	// |o|o|o|  
-	// |_|x|_|
-}
+	/* 	 _ _ _		
+		|_|o|_|	 <----- Board will look like this.
+		|_|_|_|
+		|_|x|_|
+	*/
+}	
+
 
 void TicTacToe::updateGameBoard(int input){
 	switch(playerTurn){
@@ -215,4 +296,3 @@ int main(){
 	int exit;cin>>exit;
 	return 0;
 }
-
