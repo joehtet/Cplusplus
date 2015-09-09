@@ -1,0 +1,33 @@
+// Fun with functions
+
+#include <iostream>
+using namespace std;
+
+void say_hello(int i){
+    for(int j=0;j<i;j++){
+        cout << "Hello" << endl;
+    }
+}
+
+int product(int x,int y){
+    return x*y;
+}
+
+int half(int i){
+    cout << i << endl;
+    if(i<=0){
+        return 0;
+    }
+
+    else{
+        i=i/2;
+        half(i);
+    }
+}
+
+int main(){
+    say_hello(5);
+    product(2,3);
+    half(100);
+	return 0;
+}
