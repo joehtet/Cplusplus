@@ -6,7 +6,6 @@
 \\\\\\\\\\\\\\\\\
 */
 
-//I've created a monster!
 
 #include <cstdlib>
 #include <iostream>
@@ -16,9 +15,9 @@
 using namespace std;
 
 
-class TicTacToe{ // Need to structure my code better. Should I make a class for CPU AI?
+class TicTacToe{ 
 
-// mah variable declarations
+// variable declarations
 	private:
 		int t; // iterates the number of turns. this is the "time" unit of this system.
 		int playerTurn; // which player went last
